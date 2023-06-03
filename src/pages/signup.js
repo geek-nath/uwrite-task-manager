@@ -41,6 +41,7 @@ const SignupPage = () => {
         name
       ).then(res => {
   
+        console.log(res);
         setIsLoading(false);
         setAlert(true);
         setAlertType('success');
