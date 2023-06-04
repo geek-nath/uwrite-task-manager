@@ -2,23 +2,23 @@ import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Logo from '../assets/images/Logo.png'
-import * as BiIcons from 'react-icons/bi'
 import * as BsIcons from 'react-icons/bs'
-
+import { Link } from 'react-router-dom'
+import UserAvatarUI from './userAvatar'
 const navigation = [
-  { name: 'Notes', href: '#', current: true, icon: <BsIcons.BsClipboard /> },
-  { name: 'Reminders', href: '#', current: false, icon: <BsIcons.BsClock />},
-  { name: 'Tags', href: '#', current: false, icon: <BsIcons.BsTags /> },
-  { name: 'Calendar', href: '#', current: false, icon: <BsIcons.BsCalendar4 /> },
+  { name: 'Home', path: '/', current: true, icon: <BsIcons.BsHouse /> },
+  { name: 'About Us', path: '/about_us', current: false, icon: <BsIcons.BsPeople />},
+  { name: 'Services', path: '/services', current: false, icon: <BsIcons.BsTools /> },
+  { name: 'Articles', path: '/articles', current: false, icon: <BsIcons.BsNewspaper /> },
+  { name: 'Faqs', path: '/faq', current: false, icon: <BsIcons.BsHash className='text-base' /> }
 ]
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
-
 const NavbarUI = () => {
+  const userIsLoggedIn = localStorage.getItem('cookieFallback');
   return (
-    <Disclosure as="nav" className="bg-white rounded-lg shadow-lg p-1">
+    <Disclosure as="nav" className="bg-white p-1">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -42,30 +42,24 @@ const NavbarUI = () => {
                 <div className="hidden sm:mx-auto sm:block">
                   <div className="flex space-x-4">
                     {navigation.map((item) => (
-                      <a key={item.name} href={item.href} className={classNames(item.current ? 'bg-gray-900 text-white' : 'text-gray-500 hover:text-gray-900','rounded-md flex items-center gap-2 px-3 py-2 text-base duration-500')} aria-current={item.current ? 'page' :  undefined} >
+                      <Link key={item.name} to={item.path} className={classNames(item.current ? 'text-gray-900 font-bold underline' : 'text-gray-500 hover:text-gray-900','rounded-md font-semibold flex items-center gap-2 px-3 py-2 text-sm duration-500')} aria-current={item.current ? 'page' :  undefined} >
                         {item.icon} {item.name}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </div>
               </div>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+              { userIsLoggedIn ? <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <button type="button" className="rounded-full text-gray-900 focus:outline-none" >
-                  <span className="sr-only">View notifications</span>
-                  <BiIcons.BiMessageAlt className="h-6 w-6" aria-hidden="true" />
-                </button>
-
-                <button type="button" className="rounded-full ml-5 text-gray-900 focus:outline-none" >
                   <span className="sr-only">View notifications</span>
                   <BellIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
-
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-5">
                   <div>
                     <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                       <span className="sr-only">Open user menu</span>
-                      <img className="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                      <UserAvatarUI />
                     </Menu.Button>
                   </div>
                   <Transition as={Fragment} enter="transition ease-out duration-100" enterFrom="transform opacity-0 scale-95" enterTo="transform opacity-100 scale-100" leave="transition ease-in duration-75" leaveFrom="transform opacity-100 scale-100" leaveTo="transform opacity-0 scale-95" >
@@ -73,7 +67,14 @@ const NavbarUI = () => {
                       <Menu.Item>
                         {({ active }) => (
                           <a href="/" className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')} >
-                            Your Profile
+                            Dashboard
+                          </a>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          <a href="/" className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')} >
+                            User Profile
                           </a>
                         )}
                       </Menu.Item>
@@ -94,16 +95,17 @@ const NavbarUI = () => {
                     </Menu.Items>
                   </Transition>
                 </Menu>
-              </div>
+              </div> : <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                <button className='flex justify-center rounded-md bg-gray-900 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900'>Get Started</button>
+              </div> }
             </div>
           </div>
-
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
               {navigation.map((item) => (
-                <Disclosure.Button key={item.name} as="a" href={item.href} className={classNames(item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white','block rounded-md px-3 py-2 text-base font-medium')} aria-current={item.current ? 'page' : undefined}>
-                  {item.name}
-                </Disclosure.Button>
+                <Link key={item.name} to={item.path} className={classNames(item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white','block rounded-md px-3 py-2 text-base font-medium flex gap-2 items-center')} aria-current={item.current ? 'page' : undefined}>
+                  {item.icon} {item.name}
+                </Link>
               ))}
             </div>
           </Disclosure.Panel>
@@ -112,5 +114,4 @@ const NavbarUI = () => {
     </Disclosure>
   )
 }
-
 export default NavbarUI;
