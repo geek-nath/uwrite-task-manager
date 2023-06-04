@@ -40,13 +40,12 @@ const SignupPage = () => {
       setAlertMessage('Your account has been created successfully.')
       setIsLoading(false);
     }).catch((error) => {
-      console.log(error.message);
       setAlert(true);
       setAlertType('error');
       setAlertMessage('An error occured while creating your account, please try again.')
       setIsLoading(false);
       if(error.message === 'A user with the same email already exists in your project.') {
-        setAlertMessage('Email address already in use.');
+        setAlertMessage('A user with the same email already exists.');
       }
     })
   }
