@@ -1,8 +1,9 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Logo from '../assets/images/Logo.png'
 import * as BsIcons from 'react-icons/bs'
+import * as AiIcons from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import UserAvatarUI from './userAvatar'
 import { account } from '../appwriteConfig'
@@ -17,26 +18,15 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 const NavbarUI = () => {
-  const userIsLoggedIn = localStorage.getItem('cookieFallback');
-  const [ userDetails, setUserDetails ] = useState();
+  const userIsLoggedIn = localStorage.getItem('isAuth');
   const logUserOut = async () => {
     try {
       await account.deleteSession('current');
-      localStorage.removeItem('cookieFallback');
+      localStorage.removeItem('isAuth');
     } catch (error) {
       console.log(error);
     }
   }
-  useEffect(() => {
-    const getUserData = account.get();
-    getUserData.then(
-      function(response) {
-        setUserDetails(response);
-      }, function(error) {
-        console.log(error);
-      }
-    )
-  }, []);
   return (
     <Disclosure as="nav" className="bg-white p-1">
       {({ open }) => (
@@ -60,7 +50,7 @@ const NavbarUI = () => {
                   <img className="hidden h-8 w-auto lg:block" src={ Logo } alt="Uwrite Company Logo" />
                 </div>
                 <div className="hidden sm:mx-auto sm:block">
-                  <div className="flex space-x-4">
+                  <div className="flex space-x-0 xl:space-x-4 lg:space-x-4">
                     {navigation.map((item) => (
                       <Link key={item.name} to={item.path} className={classNames(item.current ? 'text-gray-900 font-bold underline' : 'text-gray-500 hover:text-gray-900','rounded-md font-semibold flex items-center gap-2 px-3 py-2 text-sm duration-500')} aria-current={item.current ? 'page' :  undefined} >
                         {item.icon} {item.name}
@@ -78,11 +68,7 @@ const NavbarUI = () => {
                 <Menu as="div" className="relative ml-5">
                   <div>
                     <Menu.Button className="flex gap-2 items-center rounded-full outline-none">
-                      <UserAvatarUI />
-                      <div className='text-left hidden xl:block lg:block md:block'>
-                        <h5 className='text-base text-gray-900'>{userDetails.name}</h5>
-                        <h6 className='text-sm text-gray-300'>{userDetails.email}</h6>
-                      </div>
+                      <UserAvatarUI showNameAndEmail={true} />
                     </Menu.Button>
                   </div>
                   <Transition as={Fragment} enter="transition ease-out duration-100" enterFrom="transform opacity-0 scale-95" enterTo="transform opacity-100 scale-100" leave="transition ease-in duration-75" leaveFrom="transform opacity-100 scale-100" leaveTo="transform opacity-0 scale-95" >
@@ -119,7 +105,9 @@ const NavbarUI = () => {
                   </Transition>
                 </Menu>
               </div> : <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <button className='flex justify-center rounded-md bg-gray-900 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900'>Get Started</button>
+                <Link to={'/signup'} className='no-underline'>
+                  <button className='text-sm font-semibold flex items-center gap-2 leading-6 text-gray-900'>Sign Up <AiIcons.AiOutlineArrowRight /></button>
+                </Link>
               </div> }
             </div>
           </div>
