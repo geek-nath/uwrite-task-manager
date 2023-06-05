@@ -23,6 +23,7 @@ const SignInPage = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
+      localStorage.setItem('isAuth', true);
       await account.createEmailSession(userDetail.email, userDetail.password);
       setAlert(true);
       setAlertType('success');
