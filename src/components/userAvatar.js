@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { createAvatar } from '@dicebear/core'
-import { initials } from '@dicebear/collection'
 import { account } from '../appwriteConfig';
-const UserAvatarUI = ({ userName }) => {
+import Avatar from 'react-avatar';
+const UserAvatarUI = () => {
   const [ userDetails, setUserDetails ] = useState();
-  // const avatar = createAvatar(initials, {
-  //   // get userName as seed
-  //   seed: userDetail.name,
-  // });
-  // const avaterJSON = avatar.toJson;
-  // console.log(avaterJSON);
   useEffect(() => {
     const getUserData = account.get();
     getUserData.then(
@@ -22,9 +15,7 @@ const UserAvatarUI = ({ userName }) => {
   }, []);
   return (
     <>
-      <div className='h-8 w-8 rounded-full overflow-hidden items-center justify-center bg-gray-900'>
-        
-      </div>
+      <Avatar name={userDetails.name} round={true} size='35'/>
     </>
   )
 }

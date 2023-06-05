@@ -1,10 +1,11 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Logo from '../assets/images/Logo.png'
 import * as BsIcons from 'react-icons/bs'
 import { Link } from 'react-router-dom'
 import UserAvatarUI from './userAvatar'
+import { account } from '../appwriteConfig'
 const navigation = [
   { name: 'Home', path: '/', current: true, icon: <BsIcons.BsHouse /> },
   { name: 'About Us', path: '/about_us', current: false, icon: <BsIcons.BsPeople />},
@@ -17,6 +18,25 @@ function classNames(...classes) {
 }
 const NavbarUI = () => {
   const userIsLoggedIn = localStorage.getItem('cookieFallback');
+  const [ userDetails, setUserDetails ] = useState();
+  const logUserOut = async () => {
+    try {
+      await account.deleteSession('current');
+      localStorage.removeItem('cookieFallback');
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    const getUserData = account.get();
+    getUserData.then(
+      function(response) {
+        setUserDetails(response);
+      }, function(error) {
+        console.log(error);
+      }
+    )
+  }, []);
   return (
     <Disclosure as="nav" className="bg-white p-1">
       {({ open }) => (
@@ -57,9 +77,12 @@ const NavbarUI = () => {
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-5">
                   <div>
-                    <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                      <span className="sr-only">Open user menu</span>
+                    <Menu.Button className="flex gap-2 items-center rounded-full outline-none">
                       <UserAvatarUI />
+                      <div className='text-left hidden xl:block lg:block md:block'>
+                        <h5 className='text-base text-gray-900'>{userDetails.name}</h5>
+                        <h6 className='text-sm text-gray-300'>{userDetails.email}</h6>
+                      </div>
                     </Menu.Button>
                   </div>
                   <Transition as={Fragment} enter="transition ease-out duration-100" enterFrom="transform opacity-0 scale-95" enterTo="transform opacity-100 scale-100" leave="transition ease-in duration-75" leaveFrom="transform opacity-100 scale-100" leaveTo="transform opacity-0 scale-95" >
@@ -87,9 +110,9 @@ const NavbarUI = () => {
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
-                          <a href="/" className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                          <button onClick={logUserOut} className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 w-full text-left')}>
                             Sign out
-                          </a>
+                          </button>
                         )}
                       </Menu.Item>
                     </Menu.Items>
