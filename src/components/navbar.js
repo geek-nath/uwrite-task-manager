@@ -7,6 +7,7 @@ import * as AiIcons from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import UserAvatarUI from './userAvatar'
 import { account } from '../appwriteConfig'
+import { useNavigate } from 'react-router-dom'
 const navigation = [
   { name: 'Home', path: '/', current: true, icon: <BsIcons.BsHouse /> },
   { name: 'About Us', path: '/about_us', current: false, icon: <BsIcons.BsPeople />},
@@ -19,10 +20,14 @@ function classNames(...classes) {
 }
 const NavbarUI = () => {
   const userIsLoggedIn = localStorage.getItem('isAuth');
+  const navigator = useNavigate();
   const logUserOut = async () => {
     try {
       await account.deleteSession('current');
       localStorage.removeItem('isAuth');
+      setTimeout(() => {
+        navigator('/signin');
+      }, 1000);
     } catch (error) {
       console.log(error);
     }
