@@ -13,6 +13,7 @@ const SignupPage = () => {
     email: '',
     password: ''
   });
+  const passwordExpressions = new RegExp('(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})');
   const [ alert, setAlert ] = useState(false);
   const [ alertType, setAlertType ] = useState('');
   const [ alertMessage, setAlertMessage ] = useState('');
@@ -26,29 +27,39 @@ const SignupPage = () => {
     e.preventDefault();
     // show that button is processing
     setIsLoading(true);
-    // create user account using appwrite createUserAccount function
-    const promise = account.create(
-      ID.unique(),
-      userDetail.email,
-      userDetail.password,
-      userDetail.name
-    );
-    promise.then((response) => {
-      console.log(response);
-      setAlert(true);
-      setAlertType('success');
-      setAlertMessage('Your account has been created successfully.')
-      setIsLoading(false);
-      navigator('/')
-    }).catch((error) => {
+    // chec if password value is strong
+    if(!passwordExpressions.test(userDetail.password)) {
       setAlert(true);
       setAlertType('error');
-      setAlertMessage('An error occured while creating your account, please try again.')
+      setAlertMessage('Password must be 6 characters long and have at least one special character.');
       setIsLoading(false);
-      if(error.message === 'A user with the same email already exists in your project.') {
-        setAlertMessage('A user with the same email already exists.');
-      }
-    })
+    } else {
+      // create user account using appwrite createUserAccount function
+      const promise = account.create(
+        ID.unique(),
+        userDetail.email,
+        userDetail.password,
+        userDetail.name
+      );
+      promise.then((response) => {
+        console.log(response);
+        setAlert(true);
+        setAlertType('success');
+        setAlertMessage('Your account has been created successfully.')
+        setIsLoading(false);
+        account.createEmailSession(userDetail.email, userDetail.password);
+        localStorage.setItem('isAuth', true);
+        navigator('/')
+      }).catch((error) => {
+        setAlert(true);
+        setAlertType('error');
+        setAlertMessage('An error occured while creating your account, please try again.')
+        setIsLoading(false);
+        if(error.message === 'A user with the same email already exists in your project.') {
+          setAlertMessage('A user with the same email already exists.');
+        }
+      })
+    }
   }
   return (
     <>
