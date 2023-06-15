@@ -1,9 +1,11 @@
 import React from 'react'
-import NavbarUI from '../components/navbar'
+import HeroComponentUI from './components/hero'
 const HomePage = () => {
   return (
     <>
-      <NavbarUI />
+      <main>
+        <HeroComponentUI />
+      </main>
     </>
   )
 }
